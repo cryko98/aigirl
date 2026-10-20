@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AURA — The Guardian</title>
+  <meta name="description" content="AURA is a superintelligent AI guarding a Solana reward pot. Convince her, if you can." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%235ef2ff' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%239b5cff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <canvas id="neural" aria-hidden="true"></canvas>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-core"></div>
+    <div class="boot-text"><span id="boot-line">INITIALIZING GUARDIAN PROTOCOL</span></div>
+  </div>
+
+  <main class="stage" id="stage">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark"><i></i></span>
+        <span class="brand-name">AURA</span>
+        <span class="brand-sub">GUARDIAN PROTOCOL · SOLANA</span>
+      </div>
+
+      <div class="hud" aria-hidden="true">
+        <div class="hud-item"><i>NEURAL LOAD</i><b id="hud-load">08.2%</b></div>
+        <div class="hud-item"><i>THREAT</i><b id="hud-threat" class="ok">NOMINAL</b></div>
+        <div class="hud-item"><i>SESSIONS</i><b id="hud-sessions">—</b></div>
+        <div class="hud-item"><i>UPTIME</i><b id="hud-uptime">00:00:00</b></div>
+      </div>
+
+      <nav class="links">
+        <a href="#" target="_blank" rel="noopener" title="X / Twitter">X</a>
+        <a href="#" target="_blank" rel="noopener" title="Telegram">TG</a>
+        <a href="#" target="_blank" rel="noopener" title="Dexscreener">DEX</a>
+        <button class="btn btn-wallet" id="btn-wallet"><span class="dot"></span><span id="wallet-label">CONNECT WALLET</span></button>
+      </nav>
+    </header>
+
+    <section class="core">
+      <!-- ================= AVATAR + CHAT ================= -->
+      <div class="main-col">
+        <div class="avatar-wrap">
+          <div class="avatar-stage" id="avatar">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+            <div class="ring ring-ticks"></div>
+
+            <div class="avatar-media" id="avatar-media">
+              <img id="av-img" class="poster" src="assets/avatar/face.png" alt="" draggable="false" />
+              <div id="av-3d"></div>
+              <canvas id="av-fx"></canvas>
+              <div class="avatar-glow"></div>
+              <div class="avatar-loading" id="av-loading"><i></i><span>LOADING NEURAL BODY</span></div>
+            </div>
+
+            <div class="avatar-tag left">
+              <span class="tag-k">ENTITY</span><span class="tag-v">AURA · v2.7</span>
+              <span class="tag-k">STATE</span><span class="tag-v" id="av-state">IDLE · LISTENING</span>
+            </div>
+            <div class="avatar-tag right">
+              <span class="tag-k">MOOD</span><span class="tag-v" id="av-mood">NEUTRAL</span>
+              <span class="tag-k">SYNC</span><span class="tag-v" id="av-sync">99.98%</span>
+            </div>
+
+            <div class="wave" id="wave" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+
+          <div class="warmth">
+            <label>RESONANCE</label>
+            <div class="warmth-bar"><i id="warmth-fill"></i></div>
+            <span class="warmth-hint" id="warmth-hint">hideg</span>
+          </div>
+        </div>
+
+        <div class="chat" id="chat">
+          <div class="chat-log" id="chat-log" aria-live="polite"></div>
+          <form class="chat-form" id="chat-form" autocomplete="off">
+            <span class="prompt-mark">›</span>
+            <input id="chat-input" placeholder="Convince her you deserve it…" maxlength="600" autocomplete="off" />
+            <button type="submit" class="btn btn-send" id="btn-send">
+              <span>TRANSMIT</span>
+            </button>
+          </form>
+          <div class="chat-meta">
+            <span id="meta-turns">0 messages</span>
+            <span class="sep">·</span>
+            <span id="meta-mode">—</span>
+            <span class="grow"></span>
+            <button class="btn-ghost" id="btn-voice" type="button">VOICE: ON</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= REWARD POT ================= -->
+      <aside class="pot-col">
+        <div class="pot-card">
+          <div class="pot-head">
+            <span class="pot-label">REWARD POT</span>
+            <span class="live"><i></i>LIVE</span>
+          </div>
+          <div class="pot-amount"><span id="pot-sol">0.000</span><small>SOL</small></div>
+          <div class="pot-usd" id="pot-usd">≈ —</div>
+          <button class="pot-address" id="pot-address" title="Copy address" type="button">
+            <span id="pot-address-text">treasury not configured</span>
+            <i>COPY</i>
+          </button>
+
+          <div class="stats">
+            <div><b id="stat-attempts">0</b><span>attempts</span></div>
+            <div><b id="stat-paid">0.00</b><span>SOL released</span></div>
+            <div><b id="stat-winners">0</b><span>winners</span></div>
+          </div>
+
+          <div class="rules">
+            <div class="rules-title">PROTOCOL</div>
+            <ul id="rules">
+              <li>AURA gives <b>nothing</b> by default.</li>
+            </ul>
+          </div>
+
+          <div class="winners">
+            <div class="rules-title">RECENT RELEASES</div>
+            <ul id="winners-list"><li class="empty">nobody has convinced her yet</li></ul>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="ticker" aria-hidden="true">
+      <div class="ticker-track" id="ticker"></div>
+    </footer>
+  </main>
+
+  <!-- Wallet modal (manual address fallback) -->
+  <div class="modal" id="wallet-modal" hidden>
+    <div class="modal-card">
+      <div class="modal-title">WALLET LINK</div>
+      <p>Connect with Phantom, or paste a Solana address where AURA can send SOL – if you ever convince her.</p>
+      <button class="btn btn-primary" id="btn-phantom" type="button">PHANTOM</button>
+      <div class="or">or</div>
+      <input id="wallet-input" placeholder="Solana address (base58)" spellcheck="false" />
+      <div class="modal-actions">
+        <button class="btn-ghost" id="btn-wallet-cancel" type="button">CANCEL</button>
+        <button class="btn btn-primary" id="btn-wallet-save" type="button">SAVE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Release overlay -->
+  <div class="release" id="release" hidden>
+    <div class="release-inner">
+      <div class="release-k">RELEASE AUTHORIZED</div>
+      <div class="release-v"><span id="release-amount">0.00</span> SOL</div>
+      <a class="release-sig" id="release-sig" href="#" target="_blank" rel="noopener">tx</a>
+    </div>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js/+esm",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+      "talkinghead": "https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@1.7/modules/talkinghead.mjs"
+  } }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
